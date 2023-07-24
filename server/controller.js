@@ -1,15 +1,14 @@
-require('dotenv').config()
-const {CONNECTION_STRING} = process.env
-const Sequelize = require('sequelize')
-const sequelize = new Sequelize(CONNECTION_STRING,{
-    dialect: 'postgres',
-    dialectOptions : {
-        ssl : {
-            rejectUnauthorized: false
-        }
-    }
-    
-})
+require("dotenv").config();
+const Sequelize = require("sequelize");
+const { CONNECTION_STRING } = process.env;
+const sequelize = new Sequelize(CONNECTION_STRING, {
+  dialect: "postgres",
+  dialectOptions: {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  },
+});
 
 module.exports = {
     seed: (req, res) => {
@@ -27,7 +26,7 @@ module.exports = {
                 name varchar
                 rating integer
                 country_id integer REFERENCES countries(country_id) UNIQUE (country_id)
-            }
+            };
 
             insert into countries (name)
             values ('Afghanistan'),
@@ -232,21 +231,21 @@ module.exports = {
     },
     getCountries: (req, res) => {
         sequelize.query(`
-        select * from countries
+        select * from countries;
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
-            res.status(400).send(err)
+            res.status(500).send(err)
          })
     },
     createCity: (req, res) => {
         sequelize.query(`
         insert into cities(name, rating, country_id)
-        values(${req.body.name},${req.body.rating},${req.body.countryId})
+        values(${req.body.name},${req.body.rating},${req.body.countryId}) returning *;
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
-            res.status(400).send(err)
+            res.status(500).send(err)
          })
     },
     getCities: (req, res) => {
@@ -259,7 +258,7 @@ module.exports = {
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
-            res.status(400).send(err)
+            res.status(500).send(err)
          })
     },
     deleteCity: (req, res) => {
@@ -268,7 +267,7 @@ module.exports = {
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
-            res.status(400).send(err)
+            res.status(500).send(err)
          })
     }
 }
