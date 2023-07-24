@@ -25,7 +25,7 @@ module.exports = {
                 city_id serial primary key,
                 name varchar
                 rating integer
-                country_id integer REFERENCES countries(country_id) UNIQUE (country_id)
+                country_id integer REFERENCES countries(country_id)
             };
 
             insert into countries (name)
@@ -231,7 +231,7 @@ module.exports = {
     },
     getCountries: (req, res) => {
         sequelize.query(`
-        select * from countries;
+        select name from countries;
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
@@ -254,7 +254,7 @@ module.exports = {
         from cities
         join countries
         on city.country_id = country.country_id
-        order by rating desc
+        order by rating desc;
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
@@ -263,7 +263,7 @@ module.exports = {
     },
     deleteCity: (req, res) => {
         sequelize.query(`
-        delete from cities where city_id = ${req.params.id}
+        delete from cities where city_id = ${req.params.id};
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
