@@ -21,12 +21,12 @@ module.exports = {
                 name varchar
             );
 
-            create table cities {
+            create table cities (
                 city_id serial primary key,
-                name varchar
-                rating integer
-                country_id integer REFERENCES countries(country_id)
-            };
+                name varchar,
+                rating integer,
+                country_id integer references countries(country_id)
+            );
 
             insert into countries (name)
             values ('Afghanistan'),
@@ -231,7 +231,7 @@ module.exports = {
     },
     getCountries: (req, res) => {
         sequelize.query(`
-        select name from countries;
+        select * from countries;
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
@@ -239,9 +239,10 @@ module.exports = {
          })
     },
     createCity: (req, res) => {
+        console.log(req.body)
         sequelize.query(`
         insert into cities(name, rating, country_id)
-        values(${req.body.name},${req.body.rating},${req.body.countryId}) returning *;
+        values('${req.body.name}',${req.body.rating},${req.body.countryId}) returning *;
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
          }).catch(err => {
@@ -250,10 +251,10 @@ module.exports = {
     },
     getCities: (req, res) => {
         sequelize.query(`
-        select city_id,cities.name as city, rating, countries.country_id, countries.name as country
+        select city_id, cities.name as city, rating, cities.country_id, countries.country_id, countries.name as country
         from cities
         join countries
-        on city.country_id = country.country_id
+        on cities.country_id = countries.country_id
         order by rating desc;
         `).then((dbRes) => {
             res.status(200).send(dbRes[0])
